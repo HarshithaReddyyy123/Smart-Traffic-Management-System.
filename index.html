@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Traffic Management System for Urban Congestion | South India Smart City</title>
+  <meta name="description" content="AI-Powered Smart Traffic Management System for Urban Congestion across South India (Telangana, Andhra Pradesh, Karnataka, Tamil Nadu, Kerala). Live heatmap, AI prediction, emergency green corridors, and adaptive signal control.">
+
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <!-- App Stylesheet -->
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <!-- Top Alert Marquee Ticker -->
+  <div class="alert-ticker-strip">
+    <span class="ticker-badge">LIVE ALERTS</span>
+    <div class="ticker-scroll-text" id="topAlertTicker">
+      Loading South Indian Smart City telemetry feeds...
+    </div>
+  </div>
+
+  <!-- Main Header & Navigation Bar -->
+  <header class="app-topbar">
+    <div class="topbar-container">
+      
+      <!-- Brand Section -->
+      <div class="brand-section" data-nav-target="landing">
+        <div class="brand-icon">🚦</div>
+        <div class="brand-title">
+          <span>Smart Traffic Management System</span>
+          <span class="brand-subtitle">Urban Congestion • South India</span>
+        </div>
+      </div>
+
+      <!-- State & City Switcher -->
+      <div class="location-switcher">
+        <span class="loc-label">State:</span>
+        <select id="stateSelector" class="custom-select" aria-label="Select State">
+          <option value="telangana">Telangana (TS)</option>
+          <option value="andhra_pradesh">Andhra Pradesh (AP)</option>
+          <option value="karnataka">Karnataka (KA)</option>
+          <option value="tamil_nadu">Tamil Nadu (TN)</option>
+          <option value="kerala">Kerala (KL)</option>
+        </select>
+
+        <span class="loc-label" style="margin-left: 0.5rem;">City:</span>
+        <select id="citySelector" class="custom-select" aria-label="Select City">
+          <option value="hyderabad">Hyderabad (TS)</option>
+          <option value="vijayawada">Vijayawada (AP)</option>
+          <option value="visakhapatnam">Visakhapatnam (AP)</option>
+          <option value="bengaluru">Bengaluru (KA)</option>
+          <option value="chennai">Chennai (TN)</option>
+          <option value="kochi">Kochi (KL)</option>
+          <option value="thiruvananthapuram">Thiruvananthapuram (KL)</option>
+        </select>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="app-nav" id="mainNavMenu">
+        <button class="nav-item-btn active" data-nav-target="landing">🏠 Overview</button>
+        <button class="nav-item-btn" data-nav-target="live-map">🗺️ Live Map</button>
+        <button class="nav-item-btn" data-nav-target="ai-predict">🧠 AI Prediction</button>
+        <button class="nav-item-btn" data-nav-target="routing">🛣️ Smart Routes</button>
+        <button class="nav-item-btn" data-nav-target="emergency">🚨 Green Wave</button>
+        <button class="nav-item-btn" data-nav-target="signal">🚥 Signal AI</button>
+        <button class="nav-item-btn" data-nav-target="pollution">🌿 Pollution / AQI</button>
+        <button class="nav-item-btn" data-nav-target="alerts">⚠️ Incidents</button>
+        <button class="nav-item-btn" data-nav-target="admin">📊 Admin Center</button>
+      </nav>
+
+      <button class="mobile-menu-btn" id="mobileMenuToggle" aria-label="Toggle menu">☰</button>
+    </div>
+  </header>
+
+  <!-- Main Application Wrapper -->
+  <main class="app-main">
+
+    <!-- =========================================================================
+         TAB 1: EXECUTIVE LANDING PAGE & SYSTEM ARCHITECTURE
+         ========================================================================= -->
+    <section id="tab-landing" class="app-tab-panel active">
+      
+      <!-- Hero Banner -->
+      <div class="landing-hero glass-panel">
+        <div class="hero-pill">
+          <span>✨ Next-Gen Intelligent Transit Solution</span>
+          <span>•</span>
+          <span class="current-state-name">Telangana</span> / <span class="current-city-name">Hyderabad</span>
+        </div>
+        <h1 class="hero-title">
+          Smart Traffic Management System for <span class="hero-gradient-text">Urban Congestion</span>
+        </h1>
+        <p class="hero-desc">
+          An AI-driven adaptive urban mobility and command platform tailored for South India's high-density metropolises. 
+          Combines live computer-vision density analytics, predictive neural forecasting, emergency vehicle pre-emption, and eco-optimized routing.
+        </p>
+        <div class="hero-cta-group">
+          <button class="btn btn-primary" data-nav-target="live-map">
+            <span>🗺️ Launch Live Command Map</span>
+          </button>
+          <button class="btn btn-emerald" data-nav-target="emergency">
+            <span>🚨 Test Green Corridor Pre-emption</span>
+          </button>
+          <button class="btn btn-secondary" data-nav-target="ai-predict">
+            <span>🧠 Explore AI Congestion Model</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Showcase Demo Scenarios -->
+      <div class="glass-panel" style="padding: 1.75rem; margin-bottom: 2.5rem;">
+        <div class="section-header" style="margin-bottom: 0.5rem;">
+          <div>
+            <h2>🎬 One-Click Demo Showcase Scenarios</h2>
+            <p class="section-subtitle">Instant interactive simulations designed for B.Tech project evaluations and feature demos.</p>
+          </div>
+        </div>
+        <div class="demo-scenarios-grid" id="demoScenariosContainer">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Problem & Solution Key Pillars -->
+      <div class="section-header">
+        <div>
+          <h2>Urban Mobility Challenges & AI Solutions</h2>
+          <p class="section-subtitle">Addressing gridlock across Hyderabad, Bengaluru, Chennai, Kochi, and Andhra Pradesh.</p>
+        </div>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card glass-panel">
+          <div class="feature-icon-box" style="background: rgba(239, 68, 68, 0.15); color: var(--accent-rose);">
+            💥
+          </div>
+          <h3>Gridlock & Bottlenecks</h3>
+          <p>
+            Key bottlenecks like Central Silk Board (Bengaluru), Kathipara (Chennai), and Cyber Towers (Hyderabad) suffer from static 60s signal timing, causing up to 45 mins idle delays.
+          </p>
+        </div>
+
+        <div class="feature-card glass-panel">
+          <div class="feature-icon-box" style="background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan);">
+            🧠
+          </div>
+          <h3>AI Predictive Neural Forecasting</h3>
+          <p>
+            Leverages multi-factor ML inputs (weather, monsoon rains, stadium events, IT park shifts) to forecast congestion up to 6 hours in advance with 94%+ accuracy.
+          </p>
+        </div>
+
+        <div class="feature-card glass-panel">
+          <div class="feature-icon-box" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald);">
+            🚨
+          </div>
+          <h3>Emergency Green Corridors</h3>
+          <p>
+            Automated GPS-linked signal pre-emption for 108 Ambulances, Fire Rescue, and Police units. Converts intersecting approaches to Red and ensures uninterrupted green wave passage.
+          </p>
+        </div>
+
+        <div class="feature-card glass-panel">
+          <div class="feature-icon-box" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-amber);">
+            🌿
+          </div>
+          <h3>Emissions & Eco Optimization</h3>
+          <p>
+            Real-time calculation of vehicular pollutants (PM2.5, PM10, CO, NOx, CO₂). Adaptive signals reduce stop-and-go idling, saving thousands of liters of fuel daily.
+          </p>
+        </div>
+      </div>
+
+      <!-- System Architecture Card -->
+      <div class="arch-diagram-card glass-panel">
+        <h2>🛠️ End-to-End System Architecture</h2>
+        <p class="section-subtitle">How IoT Sensors, Edge Cameras, AI Predictors, and City Actuators synchronize.</p>
+
+        <div class="arch-flow-wrapper">
+          <div class="arch-node">
+            <div class="arch-node-icon">📷</div>
+            <h4>Edge IoT & CCTV</h4>
+            <p>High-resolution density detection & inductive loop sensors</p>
+          </div>
+          <div class="arch-connector">➔</div>
+          <div class="arch-node">
+            <div class="arch-node-icon">🧠</div>
+            <h4>AI Prediction Core</h4>
+            <p>Multi-variable neural model & congestion index computation</p>
+          </div>
+          <div class="arch-connector">➔</div>
+          <div class="arch-node">
+            <div class="arch-node-icon">🚦</div>
+            <h4>Adaptive Actuators</h4>
+            <p>Dynamic green split timing & green-wave preemption</p>
+          </div>
+          <div class="arch-connector">➔</div>
+          <div class="arch-node">
+            <div class="arch-node-icon">📱</div>
+            <h4>Command Center & App</h4>
+            <p>Real-time citizen alerts, eco-routes & admin analytics</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =========================================================================
+         TAB 2: LIVE MAP & SMART CITY COMMAND CENTER
+         ========================================================================= -->
+    <section id="tab-live-map" class="app-tab-panel">
+      
+      <!-- Top KPIs Bar -->
+      <div class="kpi-metrics-row">
+        <div class="kpi-card glass-panel">
+          <div class="kpi-icon-wrap" style="background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan);">🛣️</div>
+          <div class="kpi-info-wrap">
+            <span class="kpi-title">Monitored Corridors</span>
+            <span class="kpi-value kpi-corridors">42</span>
+          </div>
+        </div>
+
+        <div class="kpi-card glass-panel">
+          <div class="kpi-icon-wrap" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald);">🚦</div>
+          <div class="kpi-info-wrap">
+            <span class="kpi-title">Smart Signals</span>
+            <span class="kpi-value kpi-signals">318</span>
+          </div>
+        </div>
+
+        <div class="kpi-card glass-panel">
+          <div class="kpi-icon-wrap" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-amber);">⚡</div>
+          <div class="kpi-info-wrap">
+            <span class="kpi-title">Avg Flow Speed</span>
+            <span class="kpi-value kpi-speed">24.5 km/h</span>
+          </div>
+        </div>
+
+        <div class="kpi-card glass-panel">
+          <div class="kpi-icon-wrap" style="background: rgba(239, 68, 68, 0.15); color: var(--accent-rose);">📊</div>
+          <div class="kpi-info-wrap">
+            <span class="kpi-title">Congestion Index</span>
+            <span class="kpi-value kpi-congestion">68%</span>
+          </div>
+        </div>
+
+        <div class="kpi-card glass-panel">
+          <div class="kpi-icon-wrap" style="background: rgba(139, 92, 246, 0.15); color: var(--accent-violet);">🌿</div>
+          <div class="kpi-info-wrap">
+            <span class="kpi-title">Local AQI</span>
+            <span class="kpi-value kpi-aqi">142</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map & Controls Layout Grid -->
+      <div class="map-workspace-grid">
+        
+        <!-- Main Map Container -->
+        <div class="map-container-card glass-panel">
+          
+          <!-- Layer Toggles -->
+          <div class="map-overlay-controls">
+            <button class="map-toggle-btn active" onclick="this.classList.toggle('active'); window.TrafficApp.mapEngine.toggleLayer('heatmap', this.classList.contains('active'))">
+              🔥 Heatmap (Low/Med/Heavy)
+            </button>
+            <button class="map-toggle-btn active" onclick="this.classList.toggle('active'); window.TrafficApp.mapEngine.toggleLayer('signals', this.classList.contains('active'))">
+              🚦 Live Signals & Timers
+            </button>
+            <button class="map-toggle-btn active" onclick="this.classList.toggle('active'); window.TrafficApp.mapEngine.toggleLayer('incidents', this.classList.contains('active'))">
+              ⚠️ Incidents & Hazards
+            </button>
+          </div>
+
+          <!-- Interactive Leaflet Map Div -->
+          <div id="trafficMap"></div>
+
+          <!-- Heatmap Legend -->
+          <div class="map-legend-box">
+            <div class="legend-title">TRAFFIC DENSITY HEATMAP</div>
+            <div class="legend-items">
+              <div class="legend-item">
+                <span class="legend-color-dot" style="background: #10b981;"></span>
+                <span>Low (0-35%)</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color-dot" style="background: #f59e0b;"></span>
+                <span>Medium (36-70%)</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color-dot" style="background: #ef4444;"></span>
+                <span>Heavy (71-100%)</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Map Control Sidebar -->
+        <div class="map-sidebar">
+          
+          <div class="sidebar-panel glass-panel">
+            <h3>
+              <span>📍 Quick Actions</span>
+              <span class="badge badge-low">READY</span>
+            </h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+              Click any point on the map to automatically capture coordinates for incident reporting or route picking.
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+              <button class="btn btn-sm btn-emerald" data-nav-target="emergency">
+                🚨 Trigger Green Corridor
+              </button>
+              <button class="btn btn-sm btn-primary" data-nav-target="routing">
+                🛣️ Compute Smart Route
+              </button>
+              <button class="btn btn-sm btn-secondary" data-nav-target="alerts">
+                ⚠️ Report Incident / Hazard
+              </button>
+            </div>
+          </div>
+
+          <!-- Live CCTV AI Vision Node -->
+          <div class="sidebar-panel glass-panel">
+            <h3>
+              <span>📷 CCTV AI Vision Stream</span>
+              <span class="badge badge-low">ONLINE</span>
+            </h3>
+            <div style="background: #000; border-radius: var(--radius-md); padding: 1rem; text-align: center; border: 1px solid var(--border-color); position: relative; overflow: hidden;">
+              <div style="position: absolute; top: 8px; left: 8px; font-size: 0.65rem; color: #10b981; font-family: monospace;">
+                ● LIVE REC [CAM-04 TS-HYD]
+              </div>
+              <div style="font-size: 2.5rem; margin: 1rem 0 0.5rem;">🚗 🛵 🚙 🛺</div>
+              <div style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: 600;">
+                YOLOv8 Edge Density: <span class="text-emerald font-bold">142 Veh/Min</span>
+              </div>
+              <div style="font-size: 0.65rem; color: var(--text-dim);">Queue Detection Confidence: 97.6%</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =========================================================================
+         TAB 3: AI CONGESTION PREDICTION ENGINE
+         ========================================================================= -->
+    <section id="tab-ai-predict" class="app-tab-panel">
+      
+      <div class="section-header">
+        <div>
+          <h2>🧠 AI-Based Traffic Congestion Prediction</h2>
+          <p class="section-subtitle">Multi-variable predictive modeling based on time of day, weather intensity, and South Indian regional events.</p>
+        </div>
+      </div>
+
+      <div class="prediction-dashboard-grid">
+        
+        <!-- Controls Panel -->
+        <div class="glass-panel" style="padding: 1.5rem;">
+          <h3 style="margin-bottom: 1.25rem; font-size: 1.1rem;">Simulation Parameters</h3>
+
+          <div class="form-group">
+            <label>Time of Day: <strong id="predictHourDisplay" class="text-cyan">5:00 PM (17:00 hrs)</strong></label>
+            <input type="range" id="predictHour" class="range-slider" min="0" max="23" value="17">
+          </div>
+
+          <div class="form-group">
+            <label>Day Classification</label>
+            <select id="predictDay" class="form-control">
+              <option value="weekday">Standard Weekday (IT & School Rush)</option>
+              <option value="weekend">Weekend (Leisure & Shopping Flow)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Weather Condition</label>
+            <select id="predictWeather" class="form-control">
+              <option value="clear">☀️ Clear Sky / Dry</option>
+              <option value="cloudy">⛅ Partly Cloudy</option>
+              <option value="moderate_rain">🌧️ Moderate Showers</option>
+              <option value="monsoon_rain">⛈️ Monsoonal Downpour / Waterlogging</option>
+              <option value="dense_fog">🌫️ Dense Fog / Low Visibility</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Regional Event / Surge Trigger</label>
+            <select id="predictEvent" class="form-control">
+              <option value="none">Regular Flow (No Special Event)</option>
+              <option value="tech_park_peak">💻 Tech Park Shift (IT Corridor Peak)</option>
+              <option value="festival_rush">🎉 Festival Shopping / Holiday Rush (Sankranti / Onam / Pongal)</option>
+              <option value="ipl_match">🏏 Stadium Match (Uppal / Chinnaswamy / Chepauk)</option>
+              <option value="vip_movement">🚔 VIP Convoy Transit & Corridors</option>
+            </select>
+          </div>
+
+          <button id="runPredictBtn" class="btn btn-primary" style="width: 100%;">
+            ⚡ Re-run Neural Prediction
+          </button>
+        </div>
+
+        <!-- Output & Predictions View -->
+        <div>
+          
+          <!-- Key Output Metrics -->
+          <div class="prediction-results-grid">
+            <div class="pred-result-card glass-panel">
+              <span class="pred-metric-title">Predicted Congestion</span>
+              <div class="pred-metric-value text-rose" id="predCongestionIndex">88%</div>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Severe Gridlock Risk</span>
+            </div>
+
+            <div class="pred-result-card glass-panel">
+              <span class="pred-metric-title">Speed Degradation</span>
+              <div class="pred-metric-value text-amber" id="predSpeed">14 km/h (-52%)</div>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">From 32 km/h baseline</span>
+            </div>
+
+            <div class="pred-result-card glass-panel">
+              <span class="pred-metric-title">Delay Projections</span>
+              <div class="pred-metric-value text-cyan" id="predDelay">+28 mins / 10km</div>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Additional commute time</span>
+            </div>
+
+            <div class="pred-result-card glass-panel">
+              <span class="pred-metric-title">AI Confidence Score</span>
+              <div class="pred-metric-value text-emerald" id="predConfidence">96.2%</div>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Trained on 500k+ data points</span>
+            </div>
+          </div>
+
+          <!-- Recommendation Alert Box -->
+          <div class="glass-panel" style="padding: 1.25rem; margin-bottom: 1.5rem; border-left: 4px solid var(--accent-cyan);">
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.35rem;">🤖 Recommended Tactical Intervention:</h4>
+            <p id="predRecommendation" style="font-size: 0.85rem; color: var(--text-muted);">
+              Trigger automated green-wave cycle extension on primary arterials & broadcast citizen diversions.
+            </p>
+          </div>
+
+          <!-- 24-Hour Projected Curve Chart -->
+          <div class="chart-container-card glass-panel">
+            <h4 style="font-size: 1rem; margin-bottom: 1rem;">📈 24-Hour Predictive Congestion Index Curve</h4>
+            <div class="chart-wrapper">
+              <canvas id="predTimelineChart"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =========================================================================
+         TAB 4: SMART ROUTE RECOMMENDATION
+         ========================================================================= -->
+    <section id="tab-routing" class="app-tab-panel">
+      
+      <div class="section-header">
+        <div>
+          <h2>🛣️ Smart Dynamic Route Recommendation</h2>
+          <p class="section-subtitle">Multi-objective routing comparing AI Fastest, Eco-Savings, and Arterial Diversions.</p>
+        </div>
+      </div>
+
+      <div class="routing-dashboard-grid">
+        
+        <!-- Origin/Dest Selectors -->
+        <div class="glass-panel" style="padding: 1.5rem;">
+          <h3 style="margin-bottom: 1.25rem; font-size: 1.1rem;">Route Planner (<span class="current-city-name">Hyderabad</span>)</h3>
+
+          <div class="form-group">
+            <label>Origin Landmark</label>
+            <select id="routeOrigin" class="form-control">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Destination Landmark</label>
+            <select id="routeDest" class="form-control">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+
+          <button id="calcRouteBtn" class="btn btn-primary" style="width: 100%; margin-bottom: 1.5rem;">
+            🔍 Calculate Optimal Routes
+          </button>
+
+          <!-- Turn-by-Turn Steps -->
+          <h4 style="font-size: 0.9rem; margin-bottom: 0.75rem;">Navigation Turn-by-Turn Guidance</h4>
+          <div class="route-steps-container" id="routeStepsList">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Route Comparison Cards -->
+        <div>
+          
+          <div class="route-options-row">
+            <div class="route-option-card active route-tab-btn" data-route-type="fastest" id="card-route-fastest">
+              <div class="route-type-badge text-cyan">⚡ Fastest (AI Green-Wave)</div>
+              <div class="route-eta">18 <small>mins</small></div>
+              <div class="route-meta">8.4 km • 28 km/h avg</div>
+              <div class="route-savings">Signals: 2 • CO₂: 1.51kg</div>
+            </div>
+
+            <div class="route-option-card route-tab-btn" data-route-type="eco" id="card-route-eco">
+              <div class="route-type-badge text-emerald">🌱 Eco Friendly (-24% Idle)</div>
+              <div class="route-eta">21 <small>mins</small></div>
+              <div class="route-meta">9.1 km • 26 km/h avg</div>
+              <div class="route-savings">Saved: 0.41L fuel (980g CO₂)</div>
+            </div>
+
+            <div class="route-option-card route-tab-btn" data-route-type="arterial" id="card-route-arterial">
+              <div class="route-type-badge text-indigo">🛡️ Bypass Congestion</div>
+              <div class="route-eta">23 <small>mins</small></div>
+              <div class="route-meta">9.9 km • 25 km/h avg</div>
+              <div class="route-savings">Zero Active Bottlenecks</div>
+            </div>
+          </div>
+
+          <!-- Route Preview Action -->
+          <div class="glass-panel" style="padding: 1.5rem; text-align: center;">
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
+              The calculated polyline and turn trajectory have been loaded into the map engine.
+            </p>
+            <button class="btn btn-emerald" data-nav-target="live-map">
+              🗺️ View Route on Live Interactive Map
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =========================================================================
+         TAB 5: EMERGENCY VEHICLE PRIORITY (GREEN WAVE)
+         ========================================================================= -->
+    <section id="tab-emergency" class="app-tab-panel">
+      
+      <div class="section-header">
+        <div>
+          <h2>🚨 Emergency Vehicle Priority & Green Wave Corridor</h2>
+          <p class="section-subtitle">Real-time GPS signal pre-emption for Ambulance (108), Fire (101), and Police (100).</p>
+        </div>
+      </div>
+
+      <!-- Active Emergency Status Banner (Hidden until triggered) -->
+      <div id="emergencyStatusBanner" class="emergency-banner" style="display: none;">
+        <!-- Populated by JS -->
+      </div>
+
+      <div class="emergency-dashboard-grid">
+        
+        <!-- Emergency Dispatch Controller -->
+        <div class="glass-panel" style="padding: 1.5rem;">
+          <h3 style="margin-bottom: 1.25rem; font-size: 1.1rem;">Emergency Dispatch System</h3>
+
+          <div class="form-group">
+            <label>Emergency Vehicle Unit</label>
+            <select id="emergencyVehicleType" class="form-control">
+              <option value="ambulance">🚑 Ambulance (108 Trauma / Critical EMS)</option>
+              <option value="fire">🚒 Fire & Rescue Quick Response (101)</option>
+              <option value="police">🚓 Police Flying Squad (100)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Origin Base / Hospital</label>
+            <select id="emergencyHospital" class="form-control">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+            <button id="startEmergencyBtn" class="btn btn-rose" style="flex: 1;">
+              ⚡ Activate Green Corridor
+            </button>
+            <button id="stopEmergencyBtn" class="btn btn-secondary">
+              ⏹️ Release
+            </button>
+          </div>
+
+          <div style="margin-top: 1rem;">
+            <button id="muteSirenBtn" class="btn btn-xs btn-outline" style="width: 100%;">
+              🔊 Toggle Audio Siren
+            </button>
+          </div>
+        </div>
+
+        <!-- Telemetry & Live Preemption Monitor -->
+        <div>
+          <div class="glass-panel" style="padding: 1.5rem;">
+            <h3 style="margin-bottom: 1rem;">📡 Green Corridor Pre-emption Telemetry</h3>
+
+            <div class="emergency-telemetry-grid" id="emergencyTelemetry" style="display: none;">
+              <div class="pred-result-card glass-panel">
+                <span class="pred-metric-title">ETA Countdown</span>
+                <div class="pred-metric-value text-emerald" id="emEtaCountdown">3:45</div>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">-68% vs normal traffic</span>
+              </div>
+
+              <div class="pred-result-card glass-panel">
+                <span class="pred-metric-title">Corridor Distance</span>
+                <div class="pred-metric-value text-cyan" id="emDistCleared">2.4 / 8.4 km</div>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">En route to Trauma Care</span>
+              </div>
+
+              <div class="pred-result-card glass-panel">
+                <span class="pred-metric-title">Signals Pre-empted</span>
+                <div class="pred-metric-value text-emerald" id="emSignalsPreempted">4 / 4 All Green</div>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Cross-traffic hold active</span>
+              </div>
+
+              <div class="pred-result-card glass-panel">
+                <span class="pred-metric-title">Yield Compliance</span>
+                <div class="pred-metric-value text-amber" id="emYieldRate">98.4%</div>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">VMS digital sign alert</span>
+              </div>
+            </div>
+
+            <div style="margin-top: 1.5rem; text-align: center;">
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+                When activated, the Green Wave automatically halts cross-traffic and turns all upcoming signal phases to solid green with audio siren synthesis.
+              </p>
+              <button class="btn btn-primary" data-nav-target="live-map">
+                🗺️ Watch Emergency Corridor Live on Map
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =========================================================================
+         TAB 6: ADAPTIVE TRAFFIC SIGNAL OPTIMIZATION
+         ========================================================================= -->
+    <section id="tab-signal" class="app-tab-panel">
+      
+      <div class="section-header">
+        <div>
+          <h2>🚥 Adaptive Traffic Signal Optimization</h2>
+          <p class="section-subtitle">Real-time vehicle density analysis with AI Green Split timing vs static fixed timers.</p>
+        </div>
+      </div>
+
+      <div class="signal-dashboard-grid">
+        
+        <!-- 4-Arm Junction Simulation Card -->
+        <div class="junction-simulation-card glass-panel">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 id="signalJunctionName">Cyber Towers Junction (Hitec City)</h3>
+            <span class="badge badge-low">AI ADAPTIVE ACTIVE</span>
+          </div>
+
+          <!-- Mode Selector -->
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-sm btn-secondary signal-mode-btn active" data-signal-mode="ai_adaptive">
+              🧠 AI Adaptive Split
+            </button>
+            <button class="btn btn-sm btn-secondary signal-mode-btn" data-signal-mode="fixed_timer">
+              ⏱️ Fixed 60s Timer
+            </button>
+          </div>
+
+          <!-- 4 Approaches (North, South, East, West) -->
+          <div class="arm-density-item">
+            <div class="arm-header">
+              <span>North Approach (Kondapur Inflow)</span>
+              <span id="greenTime_north" class="text-emerald">32s Green</span>
+            </div>
+            <input type="range" id="armSlider_north" class="range-slider" min="10" max="80" value="48">
+            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-dim); margin-top: 0.25rem;">
+              <span id="armVal_north">48 veh</span>
+              <button class="btn btn-xs btn-outline btn-override-arm" data-arm="north">Override 60s</button>
+            </div>
+            <div class="progress-bar-bg"><div id="splitBar_north" class="progress-bar-fill" style="width: 53%;"></div></div>
+          </div>
+
+          <div class="arm-density-item">
+            <div class="arm-header">
+              <span>South Approach (Madhapur Link)</span>
+              <span id="greenTime_south" class="text-emerald">35s Green</span>
+            </div>
+            <input type="range" id="armSlider_south" class="range-slider" min="10" max="80" value="52">
+            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-dim); margin-top: 0.25rem;">
+              <span id="armVal_south">52 veh</span>
+              <button class="btn btn-xs btn-outline btn-override-arm" data-arm="south">Override 60s</button>
+            </div>
+            <div class="progress-bar-bg"><div id="splitBar_south" class="progress-bar-fill" style="width: 58%;"></div></div>
+          </div>
+
+          <div class="arm-density-item">
+            <div class="arm-header">
+              <span>East Approach (Jubilee Hills Hills Express)</span>
+              <span id="greenTime_east" class="text-emerald">25s Green</span>
+            </div>
+            <input type="range" id="armSlider_east" class="range-slider" min="10" max="80" value="38">
+            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-dim); margin-top: 0.25rem;">
+              <span id="armVal_east">38 veh</span>
+              <button class="btn btn-xs btn-outline btn-override-arm" data-arm="east">Override 60s</button>
+            </div>
+            <div class="progress-bar-bg"><div id="splitBar_east" class="progress-bar-fill" style="width: 42%;"></div></div>
+          </div>
+
+          <div class="arm-density-item">
+            <div class="arm-header">
+              <span>West Approach (Gachibowli Flyover)</span>
+              <span id="greenTime_west" class="text-emerald">41s Green</span>
+            </div>
+            <input type="range" id="armSlider_west" class="range-slider" min="10" max="80" value="62">
+            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-dim); margin-top: 0.25rem;">
+              <span id="armVal_west">62 veh</span>
+              <button class="btn btn-xs btn-outline btn-override-arm" data-arm="west">Override 60s</button>
+            </div>
+            <div class="progress-bar-bg"><div id="splitBar_west" class="progress-bar-fill" style="width: 68%;"></div></div>
+          </div>
+
+        </div>
+
+        <!-- Signal Performance Metrics -->
+        <div class="glass-panel" style="padding: 1.5rem;">
+          <h3 style="margin-bottom: 1.25rem;">Optimization Gains vs Static Timers</h3>
+
+          <div class="prediction-results-grid">
+            <div class="pred-result-card glass-panel">
+              <span class="pred-metric-title">Waiting Time Reduction</span>
+              <div class="pred-metric-value text-emerald" id="sigWaitReduction">-36% Wait Time</div>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">From 78s down to 50s</span>
+            </div>
+
+            <div class="pred-result-card glass-panel">
+              <span class="pred-metric-title">Throughput Capacity</span>
+              <div class="pred-metric-value text-cyan" id="sigQueueBoost">+32% Flow</div>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Vehicles cleared per cycle</span>
+            </div>
+
+            <div class="pred-result-card glass-panel">
+              <span class="pred-metric-title">Idle Fuel Saved</span>
+              <div class="pred-metric-value text-amber" id="sigFuelSaved">3.6 L/hr</div>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">At this single junction</span>
+            </div>
+
+            <div class="pred-result-card glass-panel">
+              <span class="pred-metric-title">CO₂ Avoided</span>
+              <div class="pred-metric-value text-emerald" id="sigCo2Saved">8.6 kg/hr</div>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Reduced greenhouse gas</span>
+            </div>
+          </div>
+
+          <div class="glass-panel" style="padding: 1.25rem; margin-top: 1.5rem; background: rgba(15, 23, 42, 0.5);">
+            <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem;">⚙️ How Adaptive Green Split Works</h4>
+            <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.6;">
+              Induction cameras continuously calculate the queue length at all 4 arms. Instead of a fixed 60-second timer, the AI Dynamically adjusts the green window proportional to vehicle density, ensuring no empty lane gets wasted green time.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =========================================================================
+         TAB 7: POLLUTION & AQI ESTIMATION
+         ========================================================================= -->
+    <section id="tab-pollution" class="app-tab-panel">
+      
+      <div class="section-header">
+        <div>
+          <h2>🌿 Vehicular Pollution & Air Quality (AQI) Impact</h2>
+          <p class="section-subtitle">Real-time emissions estimation (PM2.5, PM10, CO, NOx, CO₂) based on active traffic load.</p>
+        </div>
+      </div>
+
+      <div class="pollution-dashboard-grid">
+        
+        <!-- AQI Gauge Card -->
+        <div class="aqi-gauge-card glass-panel">
+          <h3 style="font-size: 1.1rem;">Live Air Quality Index</h3>
+          
+          <div class="aqi-circle-meter">
+            <span class="aqi-num text-amber" id="pollutionAqiVal">142</span>
+            <span class="aqi-sub">AQI Index</span>
+          </div>
+
+          <span class="badge badge-moderate" id="pollutionAqiCat" style="font-size: 0.85rem; padding: 0.25rem 0.75rem; margin-bottom: 0.75rem;">
+            MODERATE
+          </span>
+
+          <p id="pollutionHealthAdvisory" style="font-size: 0.8rem; color: var(--text-muted); text-align: center;">
+            Breathing discomfort to people with lungs, asthma and heart diseases on prolonged exposure.
+          </p>
+        </div>
+
+        <!-- Pollutant Breakdown & Eco Savings -->
+        <div>
+          
+          <div class="pollutant-grid" style="margin-bottom: 1.5rem;">
+            <div class="pollutant-card">
+              <div class="pollutant-name">PM2.5</div>
+              <div class="pollutant-val text-amber" id="polPM25">68 µg/m³</div>
+              <span class="badge badge-moderate">Moderate</span>
+            </div>
+
+            <div class="pollutant-card">
+              <div class="pollutant-name">PM10</div>
+              <div class="pollutant-val text-amber" id="polPM10">116 µg/m³</div>
+              <span class="badge badge-moderate">Moderate</span>
+            </div>
+
+            <div class="pollutant-card">
+              <div class="pollutant-name">CO (Carbon Monoxide)</div>
+              <div class="pollutant-val text-emerald" id="polCO">2.0 mg/m³</div>
+              <span class="badge badge-low">Normal</span>
+            </div>
+
+            <div class="pollutant-card">
+              <div class="pollutant-name">NO₂ (Nitrogen Oxides)</div>
+              <div class="pollutant-val text-cyan" id="polNO2">45 µg/m³</div>
+              <span class="badge badge-moderate">Moderate</span>
+            </div>
+          </div>
+
+          <!-- Ecological Impact & Offsets -->
+          <div class="glass-panel" style="padding: 1.5rem;">
+            <h4 style="font-size: 1rem; margin-bottom: 1rem;">🌱 Smart City Ecological Savings via AI Traffic Control</h4>
+            
+            <div class="prediction-results-grid">
+              <div class="pred-result-card glass-panel">
+                <span class="pred-metric-title">Total Hourly CO₂</span>
+                <div class="pred-metric-value text-rose" id="polHourlyCO2">1,840 kg/hr</div>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Current fleet emission</span>
+              </div>
+
+              <div class="pred-result-card glass-panel">
+                <span class="pred-metric-title">Fuel Saved by AI</span>
+                <div class="pred-metric-value text-emerald" id="polDailyFuelSaved">4,200 L/day</div>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">From reduced idling</span>
+              </div>
+
+              <div class="pred-result-card glass-panel">
+                <span class="pred-metric-title">Tree Absorption Equiv.</span>
+                <div class="pred-metric-value text-emerald" id="polAnnualTrees">165,420 Trees</div>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Annual forest offset equivalent</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =========================================================================
+         TAB 8: INCIDENT & ACCIDENT REPORTING + ALERTS
+         ========================================================================= -->
+    <section id="tab-alerts" class="app-tab-panel">
+      
+      <div class="section-header">
+        <div>
+          <h2>⚠️ Accident & Road-Blockage Reporting</h2>
+          <p class="section-subtitle">Submit citizen or operator reports with location coordinates to broadcast instantly across the network.</p>
+        </div>
+      </div>
+
+      <div class="alerts-dashboard-grid">
+        
+        <!-- Incident Reporting Form -->
+        <div class="glass-panel" style="padding: 1.5rem;">
+          <h3 style="margin-bottom: 1.25rem; font-size: 1.1rem;">Report Incident / Hazard</h3>
+
+          <form id="reportIncidentForm">
+            <div class="form-group">
+              <label>Incident Classification</label>
+              <select id="incidentType" class="form-control" required>
+                <option value="accident">💥 Road Accident / Collision</option>
+                <option value="waterlogging">🌊 Severe Waterlogging / Monsoon Flooding</option>
+                <option value="roadwork">🚧 Road Work / Metro Construction Blockage</option>
+                <option value="breakdown">🛑 Heavy Vehicle Breakdown (Bus/Truck)</option>
+                <option value="hazard">⚠️ Fallen Tree / Cable Hazard</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Incident Title</label>
+              <input type="text" id="incidentTitle" class="form-control" placeholder="e.g. Car collision on flyover ascent" required>
+            </div>
+
+            <div class="form-group">
+              <label>Location / Landmark Name</label>
+              <input type="text" id="incidentLocation" class="form-control" placeholder="e.g. Near Cyber Towers Gate 2" required>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+              <div class="form-group">
+                <label>Latitude (or click map)</label>
+                <input type="number" step="0.00001" id="incidentLat" class="form-control" value="17.44900" required>
+              </div>
+              <div class="form-group">
+                <label>Longitude</label>
+                <input type="number" step="0.00001" id="incidentLng" class="form-control" value="78.37800" required>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+              <div class="form-group">
+                <label>Severity Level</label>
+                <select id="incidentSeverity" class="form-control">
+                  <option value="critical">🚨 Critical (Full Blockage)</option>
+                  <option value="moderate" selected>⚠️ Moderate (1-2 Lanes Blocked)</option>
+                  <option value="low">ℹ️ Low (Slow moving)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Est. Delay (mins)</label>
+                <input type="number" id="incidentDelay" class="form-control" value="20" min="5" max="120">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Description & Advisory</label>
+              <textarea id="incidentDesc" class="form-control" rows="2" placeholder="Detail the situation and diversion recommendations..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-rose" style="width: 100%;">
+              📢 Broadcast Alert to Command Center
+            </button>
+          </form>
+        </div>
+
+        <!-- Live Alerts Feed -->
+        <div>
+          <div class="glass-panel" style="padding: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+              <h3>🚨 Active Congestion & Incident Broadcasts</h3>
+              <select id="alertSeverityFilter" class="custom-select" style="background: var(--bg-surface-elevated); padding: 0.3rem 0.6rem; border-radius: var(--radius-sm);">
+                <option value="all">All Severities</option>
+                <option value="critical">Critical Only</option>
+                <option value="moderate">Moderate</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
+
+            <div class="alerts-list-feed" id="alertsListFeed">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =========================================================================
+         TAB 9: ADMIN DASHBOARD & ADVANCED ANALYTICS
+         ========================================================================= -->
+    <section id="tab-admin" class="app-tab-panel">
+      
+      <div class="section-header">
+        <div>
+          <h2>📊 Smart City Traffic Analytics & Admin Command</h2>
+          <p class="section-subtitle">Comprehensive metrics, vehicle distribution, peak hours breakdown, and exportable reports.</p>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button id="exportPdfBtn" class="btn btn-sm btn-secondary">🖨️ Print / PDF Report</button>
+          <button id="exportCsvBtn" class="btn btn-sm btn-primary">📥 Export CSV Dataset</button>
+        </div>
+      </div>
+
+      <!-- Analytics Charts Grid -->
+      <div class="admin-analytics-grid">
+        
+        <div class="chart-container-card glass-panel">
+          <h4 style="margin-bottom: 1rem;">24-Hour Traffic Volume & Average Speed</h4>
+          <div class="chart-wrapper">
+            <canvas id="adminVolumeSpeedChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-container-card glass-panel">
+          <h4 style="margin-bottom: 1rem;">Vehicle Class Composition (South Indian Metros)</h4>
+          <div class="chart-wrapper">
+            <canvas id="adminVehicleSplitChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-container-card glass-panel">
+          <h4 style="margin-bottom: 1rem;">Congestion Severity by Peak Time Window</h4>
+          <div class="chart-wrapper">
+            <canvas id="adminPeakHoursChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-container-card glass-panel">
+          <h4 style="margin-bottom: 1rem;">Incident Frequency by Hotspot Junction (Last 30 Days)</h4>
+          <div class="chart-wrapper">
+            <canvas id="adminIncidentHotspotChart"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Admin Incidents Resolution Table -->
+      <div class="glass-panel" style="padding: 1.5rem;">
+        <h3 style="margin-bottom: 1rem;">🛡️ Active Incident Dispatch & Resolution Center</h3>
+        
+        <div class="admin-table-container">
+          <table class="stms-table">
+            <thead>
+              <tr>
+                <th>Incident Details</th>
+                <th>Severity</th>
+                <th>Projected Delay</th>
+                <th>Current Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminIncidentTableBody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer"></div>
+
+  <!-- CDN Dependencies: Leaflet.js, Leaflet.heat, Chart.js -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Application Modules -->
+  <script src="/static/js/south_india_data.js"></script>
+  <script src="/static/js/map_engine.js"></script>
+  <script src="/static/js/ai_predictor.js"></script>
+  <script src="/static/js/route_optimizer.js"></script>
+  <script src="/static/js/emergency_system.js"></script>
+  <script src="/static/js/signal_controller.js"></script>
+  <script src="/static/js/incident_manager.js"></script>
+  <script src="/static/js/pollution_model.js"></script>
+  <script src="/static/js/analytics_charts.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
